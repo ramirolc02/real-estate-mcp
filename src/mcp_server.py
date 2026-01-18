@@ -8,6 +8,7 @@ from datetime import datetime
 from typing import Literal
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 from mcp.types import TextContent
 
 from src.db.session import async_session_maker
@@ -16,21 +17,28 @@ from src.repositories.property_repository import PropertyRepository
 from src.services.content_generator import ContentGeneratorService
 from src.services.property_service import PropertyService
 
-# Initialize FastMCP server with allowed hosts for Railway deployment
-# Allow both localhost (dev) and Railway domain (production)
-allowed_hosts = [
-    "localhost",
-    "127.0.0.1",
-    "0.0.0.0",
-]
+# Build allowed hosts list from environment or use defaults
+RAILWAY_HOST = os.getenv("RAILWAY_PUBLIC_DOMAIN", "real-estate-mcp-production.up.railway.app")
 
-railway_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN")
-if railway_domain:
-    allowed_hosts.append(railway_domain)
-
-allowed_hosts.append("*.railway.app")
-
-mcp = FastMCP("real-estate-mcp", allowed_origins=allowed_hosts)
+# Initialize FastMCP server with DNS rebinding protection configured for Railway
+mcp = FastMCP(
+    "real-estate-mcp",
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=[
+            "localhost:*",
+            "127.0.0.1:*",
+            f"{RAILWAY_HOST}:*",
+            RAILWAY_HOST,
+        ],
+        allowed_origins=[
+            "http://localhost:*",
+            "http://127.0.0.1:*",
+            f"https://{RAILWAY_HOST}",
+            f"https://{RAILWAY_HOST}:*",
+        ],
+    ),
+)
 
 # Initialize content generator service (stateless, can be singleton)
 content_generator = ContentGeneratorService()
