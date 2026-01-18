@@ -1,0 +1,12 @@
+{
+  "$schema": "https://github.com/modelcontextprotocol/inspector/blob/main/docs/config-schema.json",
+  "mcpServers": {
+    "real-estate-mcp": {
+      "type": "sse",
+      "url": "http://localhost:8000/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer demo-token-12345"
+      }
+    }
+  }
+}

@@ -1,0 +1,76 @@
+# Docker Compose configuration for Real Estate MCP Server
+# Usage: docker-compose up -d
+services:
+  mcp-server:
+    build: .
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+      seed:
+        condition: service_completed_successfully
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 1
+      start_period: 10s
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    env_file:
+      - .env
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 30s
+      timeout: 3s
+      retries: 1
+    restart: unless-stopped
+
+  seed:
+    build: .
+    command: python -m src.db.seed
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # pgAdmin for database management (optional)
+  # pgadmin:
+  #   image: dpage/pgadmin4:latest
+  #   environment:
+  #     - PGADMIN_DEFAULT_EMAIL=admin@local.dev
+  #     - PGADMIN_DEFAULT_PASSWORD=admin
+  #     - PGADMIN_CONFIG_SERVER_MODE=False
+  #     - PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED=False
+  #   ports:
+  #     - "5050:80"
+  #   volumes:
+  #     - pgadmin_data:/var/lib/pgadmin
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+  #   profiles:
+  #     - tools
+  #   restart: unless-stopped
+
+volumes:
+  pgdata:
+  # pgadmin_data:

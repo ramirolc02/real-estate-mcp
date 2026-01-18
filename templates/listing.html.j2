@@ -1,0 +1,47 @@
+<title>{{ property.title }} | PropTech Listings</title>
+<meta name="description" content="{{ property.description[:160] if property.description else property.title }}">
+<meta name="keywords" content="{{ property.city }}, {{ property.property_type }}, real estate{% if property.features %}, {{ property.features | join(', ') }}{% endif %}">
+<meta property="og:title" content="{{ property.title }}">
+<meta property="og:description" content="{{ property.description[:200] if property.description else property.title }}">
+<meta property="og:type" content="website">
+<meta name="language" content="{{ language }}">
+
+<section class="listing-content" data-property-id="{{ property.id }}" data-tone="{{ tone }}">
+    <h1>{{ property.title }}</h1>
+    <p class="price">€{{ "{:,.0f}".format(property.price) }}</p>
+    <p class="location">{{ property.address }}{% if property.address %}, {% endif %}{{ property.city }}</p>
+    
+    <div class="specs">
+        {% if property.bedrooms is not none %}
+        <span class="spec-item">{{ property.bedrooms }} bed</span>
+        {% endif %}
+        {% if property.bathrooms is not none %}
+        <span class="spec-item">{{ property.bathrooms }} bath</span>
+        {% endif %}
+        {% if property.area_sqm is not none %}
+        <span class="spec-item">{{ property.area_sqm }} m²</span>
+        {% endif %}
+        {% if property.property_type %}
+        <span class="spec-item type">{{ property.property_type | title }}</span>
+        {% endif %}
+    </div>
+    
+    <div class="description">
+        <p class="generated-content">{{ generated_description }}</p>
+        {% if property.description %}
+        <p class="original-description">{{ property.description }}</p>
+        {% endif %}
+    </div>
+    
+    {% if property.features %}
+    <ul class="features">
+        {% for feature in property.features %}
+        <li>{{ feature | replace('_', ' ') | title }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    
+    <div class="status">
+        <span class="status-badge status-{{ property.status }}">{{ property.status | title }}</span>
+    </div>
+</section>

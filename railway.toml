@@ -1,0 +1,15 @@
+# Railway deployment configuration
+# https://docs.railway.com/guides/config-as-code
+
+[build]
+# Railway will auto-detect and use the Dockerfile
+builder = "dockerfile"
+dockerfilePath = "Dockerfile"
+
+[deploy]
+# Use Railway's PORT variable (defaults to 8000 if not set)
+startCommand = "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+healthcheckPath = "/health"
+healthcheckTimeout = 30
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
