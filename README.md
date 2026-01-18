@@ -13,14 +13,24 @@ An MCP (Model Context Protocol) server that enables AI agents to search, retriev
 
 ## Why This Stack?
 
-| Choice                | Rationale                                                                                                           |
-| --------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| **PostgreSQL**        | Efficient range queries on price (`WHERE price BETWEEN x AND y`), JSONB for flexible features, mature async support |
-| **Official MCP SDK**  | Spec-compliant, native resources/prompts, active maintenance by Anthropic                                           |
-| **uv**                | 10-100x faster than pip, reliable lockfiles, modern Python packaging                                                |
-| **FastMCP + FastAPI** | Decorator-based tools, SSE transport, familiar async patterns                                                       |
+| Choice                | Rationale                                                                                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **PostgreSQL**        | Efficient range queries on price (`WHERE price BETWEEN x AND y`), JSONB for flexible features, mature async support, easily includes semantic search via pgvector, and can be deployed to AWS RDS |
+| **Official MCP SDK**  | Spec-compliant, native resources/prompts, active maintenance by Anthropic                                                                                                                         |
+| **uv**                | 10-100x faster than pip, reliable lockfiles, modern Python packaging                                                                                                                              |
+| **FastMCP + FastAPI** | Decorator-based tools, SSE transport, familiar async patterns                                                                                                                                     |
 
 ## Quick Start
+
+### Try the Live Demo (Fastest)
+
+```bash
+npx -y @modelcontextprotocol/inspector \
+  --sse "https://real-estate-mcp-production.up.railway.app/mcp/sse" \
+  --header "Authorization: Bearer demo-token-12345"
+```
+
+No setup needed! See [Live Demo](#live-demo) for more details.
 
 ### Using Docker Compose (Recommended)
 
@@ -197,9 +207,51 @@ The inspector displays:
 - Interactive testing interface
 - Request/response history
 
-## Cloud Deployment (Railway)
+## Live Demo
 
-### Deploying Your Own Instance
+A public instance is deployed on Railway for testing:
+
+|           |                                                             |
+| --------- | ----------------------------------------------------------- |
+| **URL**   | `https://real-estate-mcp-production.up.railway.app/mcp/sse` |
+| **Token** | `demo-token-12345`                                          |
+
+### Try it Now
+
+```bash
+# Connect via MCP Inspector (no installation required)
+npx -y @modelcontextprotocol/inspector \
+  --sse "https://real-estate-mcp-production.up.railway.app/mcp/sse" \
+  --header "Authorization: Bearer demo-token-12345"
+```
+
+This opens an interactive UI at `http://localhost:6274` where you can:
+
+- Browse all available tools, resources, and prompts
+- Execute tool calls and see responses
+- Test the full MCP protocol
+
+### Configure Your MCP Client
+
+Add this to your MCP client configuration (Claude Desktop, Cursor, etc.):
+
+```json
+{
+  "mcpServers": {
+    "real-estate": {
+      "type": "sse",
+      "url": "https://real-estate-mcp-production.up.railway.app/mcp/sse",
+      "headers": {
+        "Authorization": "Bearer demo-token-12345"
+      }
+    }
+  }
+}
+```
+
+No local setup required—just the URL and token!
+
+## Deploy Your Own Instance (Railway)
 
 1. Push to GitHub
 2. Connect repo to [Railway](https://railway.app)
@@ -208,34 +260,6 @@ The inspector displays:
    - `API_TOKEN`: Your secret token
    - `DATABASE_URL`: Auto-configured by Railway
 5. Deploy!
-
-### Connecting to a Deployed Server
-
-If someone has already deployed this server, you only need the **server URL** and **Bearer token** to connect:
-
-```bash
-# Connect via MCP Inspector
-npx -y @modelcontextprotocol/inspector sse https://your-server.up.railway.app/mcp/sse \
-  --header "Authorization: Bearer <your-token>"
-```
-
-Or configure your MCP client with:
-
-```json
-{
-  "mcpServers": {
-    "real-estate": {
-      "transport": "sse",
-      "url": "https://your-server.up.railway.app/mcp/sse",
-      "headers": {
-        "Authorization": "Bearer <your-token>"
-      }
-    }
-  }
-}
-```
-
-No local setup required—just the URL and token!
 
 ## Project Structure
 
@@ -275,17 +299,17 @@ The database is seeded with 8 properties across:
 
 These variables are only needed if you're **deploying/running the server yourself**. If you're connecting to an existing deployment, you only need the server URL and Bearer token.
 
-| Variable          | Description               | Default                |
-| ----------------- | ------------------------- | ---------------------- |
-| `APP_NAME`        | Application name          | Real Estate MCP Server |
-| `DEBUG`           | Enable debug mode         | false                  |
-| `API_TOKEN`       | Bearer token for auth     | (required)             |
-| `DATABASE_URL`    | PostgreSQL connection URL | (required)             |
-| `POSTGRES_USER`   | Database username         | (for docker-compose)   |
-| `POSTGRES_PASSWORD` | Database password       | (for docker-compose)   |
-| `POSTGRES_DB`     | Database name             | (for docker-compose)   |
-| `DB_POOL_SIZE`    | Connection pool size      | 5                      |
-| `DB_MAX_OVERFLOW` | Max overflow connections  | 10                     |
+| Variable            | Description               | Default                |
+| ------------------- | ------------------------- | ---------------------- |
+| `APP_NAME`          | Application name          | Real Estate MCP Server |
+| `DEBUG`             | Enable debug mode         | false                  |
+| `API_TOKEN`         | Bearer token for auth     | (required)             |
+| `DATABASE_URL`      | PostgreSQL connection URL | (required)             |
+| `POSTGRES_USER`     | Database username         | (for docker-compose)   |
+| `POSTGRES_PASSWORD` | Database password         | (for docker-compose)   |
+| `POSTGRES_DB`       | Database name             | (for docker-compose)   |
+| `DB_POOL_SIZE`      | Connection pool size      | 5                      |
+| `DB_MAX_OVERFLOW`   | Max overflow connections  | 10                     |
 
 ## License
 
