@@ -7,8 +7,8 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Use Railway's PORT variable
-startCommand = "sh -c 'uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}'"
+# Seed database then start server
+startCommand = "sh -c 'python -m src.db.seed && uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}'"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
