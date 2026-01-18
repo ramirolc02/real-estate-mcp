@@ -2,6 +2,14 @@
 
 An MCP (Model Context Protocol) server that enables AI agents to search, retrieve, and generate content for real estate listings.
 
+
+
+
+https://github.com/user-attachments/assets/94df4c91-ac30-44c3-a95c-adae11573cfc
+
+
+
+
 ## Features
 
 - **3 MCP Tools**: Search properties, get details, generate listing content
