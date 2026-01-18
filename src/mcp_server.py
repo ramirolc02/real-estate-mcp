@@ -1,6 +1,7 @@
 """FastMCP server with tools, resources, and prompts."""
 
 import json
+import os
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from datetime import datetime
@@ -15,8 +16,21 @@ from src.repositories.property_repository import PropertyRepository
 from src.services.content_generator import ContentGeneratorService
 from src.services.property_service import PropertyService
 
-# Initialize FastMCP server
-mcp = FastMCP("real-estate-mcp")
+# Initialize FastMCP server with allowed hosts for Railway deployment
+# Allow both localhost (dev) and Railway domain (production)
+allowed_hosts = [
+    "localhost",
+    "127.0.0.1",
+    "0.0.0.0",
+]
+
+railway_domain = os.getenv("RAILWAY_PUBLIC_DOMAIN")
+if railway_domain:
+    allowed_hosts.append(railway_domain)
+
+allowed_hosts.append("*.railway.app")
+
+mcp = FastMCP("real-estate-mcp", allowed_origins=allowed_hosts)
 
 # Initialize content generator service (stateless, can be singleton)
 content_generator = ContentGeneratorService()
