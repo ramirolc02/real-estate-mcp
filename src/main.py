@@ -5,6 +5,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from uvicorn.middleware.proxy_headers import ProxyHeadersMiddleware
 
 from src.auth import BearerAuthMiddleware
 from src.config import settings
@@ -40,12 +41,10 @@ app = FastAPI(
 # Add authentication middleware
 app.add_middleware(BearerAuthMiddleware)
 
-# Add CORS middleware for MCP Inspector direct connection
+# Add CORS middleware for MCP Inspector and remote connections
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:6274",  # MCP Inspector UI
-    ],
+    allow_origins=["*"],  # Allow all origins for MCP clients
     allow_credentials=True,
     allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
     allow_headers=[
@@ -56,6 +55,10 @@ app.add_middleware(
     ],
     expose_headers=["mcp-session-id"],  # MCP protocol header
 )
+
+# Handle proxy headers (Railway, Heroku, etc.)
+# This ensures correct client IP and protocol detection behind reverse proxies
+app.add_middleware(ProxyHeadersMiddleware, trusted_hosts=["*"])
 
 
 # =============================================================================
