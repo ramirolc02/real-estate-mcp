@@ -7,8 +7,8 @@ builder = "dockerfile"
 dockerfilePath = "Dockerfile"
 
 [deploy]
-# Use Railway's PORT variable (defaults to 8000 if not set)
-startCommand = "uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}"
+# Use Railway's PORT variable
+startCommand = "sh -c 'uvicorn src.main:app --host 0.0.0.0 --port ${PORT:-8000}'"
 healthcheckPath = "/health"
 healthcheckTimeout = 30
 restartPolicyType = "on_failure"
