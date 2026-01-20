@@ -91,7 +91,6 @@ async def health_check():
 # =============================================================================
 
 # Mount the FastMCP SSE app at /mcp
-# This handles all MCP protocol communication over Server-Sent Events
 app.mount("/mcp", mcp.sse_app())
 
 
@@ -103,7 +102,7 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(
-        "app.main:app",
+        "src.main:app",
         host="0.0.0.0",
         port=8000,
         reload=True,

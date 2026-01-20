@@ -30,6 +30,8 @@ services:
 
   db:
     image: postgres:16-alpine
+    ports:
+      - "5432:5432"  # Expose for local development
     env_file:
       - .env
     volumes:

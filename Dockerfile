@@ -23,6 +23,8 @@ FROM python:3.11-slim AS runtime
 # Python optimizations for containers
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
+    LANG=C.UTF-8 \
+    LC_ALL=C.UTF-8 \
     PATH="/opt/venv/bin:$PATH" \
     PYTHONPATH="/app"
 

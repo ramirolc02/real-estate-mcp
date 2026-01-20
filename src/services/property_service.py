@@ -21,7 +21,7 @@ class PropertyService:
 
         Returns a list of property summaries.
         """
-        # Validate filters
+  
         if min_price is not None and min_price < 0:
             raise InvalidFilterError("min_price cannot be negative")
         if max_price is not None and max_price < 0:

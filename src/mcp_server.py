@@ -20,7 +20,7 @@ from src.services.property_service import PropertyService
 # Build allowed hosts list from environment or use defaults
 RAILWAY_HOST = os.getenv("RAILWAY_PUBLIC_DOMAIN", "real-estate-mcp-production.up.railway.app")
 
-# Initialize FastMCP server with DNS rebinding protection configured for Railway
+# Initialize FastMCP server
 mcp = FastMCP(
     "real-estate-mcp",
     transport_security=TransportSecuritySettings(
@@ -106,7 +106,7 @@ async def get_property_details(property_id: str) -> str:
     """Retrieve complete property information including internal notes.
 
     Args:
-        property_id: UUID of the property
+        property_id: UUID of the property (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
 
     Returns:
         JSON string with full property details or error message
@@ -128,12 +128,12 @@ async def get_property_details(property_id: str) -> str:
 async def generate_listing_content(
     property_id: str,
     target_language: str = "en",
-    tone: str | None = None,
+    tone: Literal["professional", "casual", "luxury"] | None = None,
 ) -> str:
     """Generate HTML listing content for a property.
 
     Args:
-        property_id: UUID of the property
+        property_id: UUID of the property (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
         target_language: Target language code (e.g., 'en', 'pt')
         tone: Content tone - 'professional', 'casual', or 'luxury'
 
@@ -193,7 +193,7 @@ async def marketing_email(property_id: str) -> list:
     """Generate a marketing email prompt for a specific property.
 
     Args:
-        property_id: UUID of the property to market
+        property_id: UUID of the property to market (format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx)
 
     Returns:
         List of prompt messages for the AI to generate a marketing email

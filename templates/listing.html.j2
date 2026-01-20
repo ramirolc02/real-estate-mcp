@@ -8,7 +8,7 @@
 
 <section class="listing-content" data-property-id="{{ property.id }}" data-tone="{{ tone }}">
     <h1>{{ property.title }}</h1>
-    <p class="price">€{{ "{:,.0f}".format(property.price) }}</p>
+    <p class="price">&euro;{{ "{:,.0f}".format(property.price) }}</p>
     <p class="location">{{ property.address }}{% if property.address %}, {% endif %}{{ property.city }}</p>
     
     <div class="specs">
@@ -19,7 +19,7 @@
         <span class="spec-item">{{ property.bathrooms }} bath</span>
         {% endif %}
         {% if property.area_sqm is not none %}
-        <span class="spec-item">{{ property.area_sqm }} m²</span>
+        <span class="spec-item">{{ property.area_sqm }} m&sup2;</span>
         {% endif %}
         {% if property.property_type %}
         <span class="spec-item type">{{ property.property_type | title }}</span>
